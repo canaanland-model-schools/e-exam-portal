@@ -178,11 +178,12 @@
     <div class="info-box">
       <h3>🔧 What this seeder will create:</h3>
       <ul>
-        <li><strong>📖 exam_passwords</strong> - Passwords for all class+subject combinations (JSS1-3, 20+ subjects)</li>
+        <li><strong>📖 exam_passwords</strong> - Passwords for all class+subject combinations (JSS1-3, SS1-3, 20+ subjects)</li>
         <li><strong>👨‍🎓 students/{studentId}/exam_attempts</strong> - Tracks completed exams per student</li>
-        <li><strong>📊 exam_scores</strong> - Sample scores for analytics (optional)</li>
+        <li><strong>📊 exam_scores</strong> - Sample scores for analytics</li>
         <li><strong>🎲 exam_randomize</strong> - Settings for randomization per subject</li>
         <li><strong>📝 exam_records</strong> - Student records with personal info</li>
+        <li><strong>🔐 exam_attempt</strong> - Legacy attempt tracking</li>
       </ul>
     </div>
 
@@ -202,8 +203,8 @@
         <div>Subjects Configured</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number" id="totalClasses">3</div>
-        <div>Classes (JSS1-3)</div>
+        <div class="stat-number" id="totalClasses">6</div>
+        <div>Classes (JSS1-3, SS1-3)</div>
       </div>
     </div>
   </div>
@@ -212,9 +213,9 @@
 <script type="module">
   // Import Firebase v9+ modular SDKs
   import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, collection, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  // ======================= YOUR FIREBASE CONFIG =======================
+  // ======================= FIREBASE CONFIG =======================
   const firebaseConfig = {
     apiKey: "AIzaSyB4YF_Liw7W7VUMXVdMItsFTXl0199uUdU",
     authDomain: "canaanland-exam-records.firebaseapp.com",
@@ -236,14 +237,13 @@
       app = getApps()[0];
     }
     db = getFirestore(app);
-    console.log("✅ Firebase initialized successfully for project: canaanland-exam-records");
+    console.log("✅ Firebase initialized successfully");
   } catch (err) {
     console.error("❌ Firebase init error:", err);
     document.getElementById("status").innerHTML = `❌ Firebase Initialization Failed: ${err.message}`;
     document.getElementById("status").className = "status-error";
   }
 
-  // DOM elements
   const statusDiv = document.getElementById("status");
   const seedBtn = document.getElementById("seedBtn");
   const statsDiv = document.getElementById("stats");
@@ -260,107 +260,108 @@
 
   // ======================= COMPLETE DATASET =======================
   
-  // All classes
-  const CLASSES = ["jss1", "jss2", "jss3"];
+  // All classes (JSS1-3 and SS1-3)
+  const CLASSES = ["jss1", "jss2", "jss3", "ss1", "ss2", "ss3"];
   
-  // All subjects (matching the dropdown in exam portal)
+  // All subjects
   const SUBJECTS = [
     "demo", "mathematics", "english_language", "english_literature",
     "intermediate_science", "digital_technology", "food_and_nutrition",
     "livestock_farming", "social_studies", "business_studies",
     "cultural_and_creative_art", "yoruba", "phe", "crs", "french",
     "music", "phonetics", "nigerian_history", "agricultural_science",
-    "fine_art", "ekiti_values"
+    "fine_art", "ekiti_values", "home_economics", "fashion_design_and_garment_making"
   ];
 
-  // Password mapping (same as original system but stored in Firebase)
+  // Complete password mapping for all classes
   const CLASS_SUBJECT_PASSWORDS = {
     jss1: {
-      demo: "9b2f7c",
-      mathematics: "x8q3r5",
-      english_language: "p4t9k1",
-      english_literature: "m6v2w8",
-      intermediate_science: "j5h7s3",
-      digital_technology: "n1d4z9",
-      food_and_nutrition: "n2e5y8",
-      livestock_farming: "a3f5y7",
-      social_studies: "e9g2q4",
-      business_studies: "r7k1b6",
-      cultural_and_creative_art: "t2w8p3",
-      yoruba: "y5n7b9",
-      phe: "v4c2x6",
-      crs: "s8d1f3",
-      french: "z6h9l5",
-      music: "q3m7p2",
-      phonetics: "w1b4t8",
-      nigerian_history: "k9j2r7",
-      agricultural_science: "f3n9n4",
-      fine_art: "t7u8e4",
-      ekiti_values: "f5v3n6"
+      demo: "9b2f7c", mathematics: "x8q3r5", english_language: "p4t9k1",
+      english_literature: "m6v2w8", intermediate_science: "j5h7s3",
+      digital_technology: "n1d4z9", food_and_nutrition: "n2e5y8",
+      home_economics: "l8c6b2", agricultural_science: "f3n9n4",
+      livestock_farming: "a3f5y7", social_studies: "e9g2q4",
+      business_studies: "r7k1b6", cultural_and_creative_art: "t2w8p3",
+      yoruba: "y5n7b9", phe: "v4c2x6", crs: "s8d1f3",
+      french: "z6h9l5", music: "q3m7p2", fine_art: "t7u8e4",
+      phonetics: "w1b4t8", nigerian_history: "k9j2r7", ekiti_values: "f5v3n6",
+      fashion_design_and_garment_making: "h5i7s5"
     },
     jss2: {
-      demo: "4r9t2x",
-      mathematics: "s7p1k8",
-      english_language: "b3w6m9",
-      english_literature: "d5v2c7",
-      intermediate_science: "h8t4q1",
-      digital_technology: "j2z6r9",
-      food_and_nutrition: "m4t7s6",
-      livestock_farming: "m9b1w4",
-      social_studies: "q5k8t2",
-      business_studies: "r3n6v9",
-      cultural_and_creative_art: "t8f1c4",
-      yoruba: "w2y7m5",
-      phe: "x6g9s3",
-      crs: "z4b8p1",
-      french: "c1m7t6",
-      music: "v5r3k9",
-      phonetics: "n8d2w7",
-      nigerian_history: "p9h4q6",
-      agricultural_science: "x2v5a2",
-      fine_art: "d4g5m3",
-      ekiti_values: "k3s8b2"
+      demo: "4r9t2x", mathematics: "s7p1k8", english_language: "b3w6m9",
+      english_literature: "d5v2c7", intermediate_science: "h8t4q1",
+      digital_technology: "j2z6r9", food_and_nutrition: "m4t7s6",
+      home_economics: "l7x3p5", agricultural_science: "x2v5a2",
+      livestock_farming: "m9b1w4", social_studies: "q5k8t2",
+      business_studies: "r3n6v9", cultural_and_creative_art: "t8f1c4",
+      yoruba: "w2y7m5", phe: "x6g9s3", crs: "z4b8p1",
+      french: "c1m7t6", music: "v5r3k9", fine_art: "d4g5m3",
+      phonetics: "n8d2w7", nigerian_history: "p9h4q6", ekiti_values: "k3s8b2",
+      fashion_design_and_garment_making: "g6n7s4"
     },
     jss3: {
-      demo: "7m3q9p",
-      mathematics: "t2v6k8",
-      english_language: "b8w1c5",
-      english_literature: "d4r9s2",
-      intermediate_science: "f7n3m6",
-      digital_technology: "h5x8t1",
-      food_and_nutrition: "g4vji8",
-      livestock_farming: "l6v4p8",
-      social_studies: "n9m2c3",
-      business_studies: "p5t8r4",
-      cultural_and_creative_art: "r1w6s9",
-      yoruba: "t3k7v2",
-      phe: "v8d4b1",
-      crs: "x6f9m5",
-      french: "z2p7q3",
-      music: "c4h8t9",
-      phonetics: "q9b3n6",
-      nigerian_history: "s5m1r8",
-      agricultural_science: "n6t4w3",
-      fine_art: "b6k8s4",
-      ekiti_values: "w7k4d2"
+      demo: "7m3q9p", mathematics: "t2v6k8", english_language: "b8w1c5",
+      english_literature: "d4r9s2", intermediate_science: "f7n3m6",
+      digital_technology: "h5x8t1", food_and_nutrition: "g4vji8",
+      home_economics: "j2q7b9", agricultural_science: "n6t4w3",
+      livestock_farming: "l6v4p8", social_studies: "n9m2c3",
+      business_studies: "p5t8r4", cultural_and_creative_art: "r1w6s9",
+      yoruba: "t3k7v2", phe: "v8d4b1", crs: "x6f9m5",
+      french: "z2p7q3", music: "c4h8t9", fine_art: "b6k8s4",
+      phonetics: "q9b3n6", nigerian_history: "s5m1r8", ekiti_values: "w7k4d2",
+      fashion_design_and_garment_making: "b8s4k5"
+    },
+    ss1: {
+      demo: "ss1d3m0", mathematics: "ss1m4th", english_language: "ss1eng",
+      digital_technology: "ss1c0mp", agricultural_science: "ss1agr",
+      english_literature: "ss1lit", phe: "ss1phe", crs: "ss1crs"
+    },
+    ss2: {
+      demo: "ss2d3m0", mathematics: "ss2m4th", english_language: "ss2eng",
+      digital_technology: "ss2c0mp", agricultural_science: "ss2agr",
+      english_literature: "ss2lit", phe: "ss2phe"
+    },
+    ss3: {
+      demo: "ss3d3m0", mathematics: "ss3m4th", english_language: "ss3eng",
+      digital_technology: "ss3c0mp", agricultural_science: "ss3agr",
+      english_literature: "ss3lit", phe: "ss3phe"
     }
   };
 
-  // Sample student data (for demo)
-  const SAMPLE_STUDENTS = [
-    { id: "STU001", name: "Adekunle Johnson", class: "jss2", image: "img/adekunle.jpg" },
-    { id: "STU002", name: "Fatima Bello", class: "jss1", image: "img/fatima.jpg" },
-    { id: "STU003", name: "Emmanuel Okafor", class: "jss3", image: "img/emmanuel.jpg" },
-    { id: "STU004", name: "Precious David", class: "jss2", image: "img/precious.jpg" },
-    { id: "demo_student", name: "Demo User", class: "jss1", image: "img/default_user.jpg" }
+  // Complete student list (from login page)
+  const STUDENTS_LIST = [
+    // JSS1
+    { id: "felix_victor", username: "felix victor", password: "cmgs101", image: "cmgs101.jpg", paid: true, class: "jss1", fullName: "Felix Victor" },
+    { id: "alpha_trinity", username: "alpha trinity", password: "cmgs102", image: "cmgs102.jpg", paid: true, class: "jss1", fullName: "Alpha Trinity" },
+    { id: "ogundipe_seun", username: "ogundipe seun", password: "cmgs103", image: "cmgs103.jpg", paid: true, class: "jss1", fullName: "Ogundipe Seun" },
+    { id: "abiodun_darasimi", username: "abiodun darasimi", password: "cmgs104", image: "cmgs104.jpg", paid: true, class: "jss1", fullName: "Abiodun Darasimi" },
+    { id: "ibegbu_emmanuel", username: "ibegbu emmanuel", password: "cmgs105", image: "cmgs105.jpg", paid: true, class: "jss1", fullName: "Ibegbu Emmanuel" },
+    { id: "david_grace", username: "david grace", password: "cmgs108", image: "cmgs108.jpg", paid: true, class: "jss1", fullName: "David Grace" },
+    // JSS2
+    { id: "ojo_ayomide", username: "ojo ayomide", password: "cmgs201", image: "cmgs201.jpg", paid: true, class: "jss2", fullName: "Ojo Ayomide" },
+    { id: "olatise_excel", username: "olatise excel", password: "cmgs202", image: "cmgs202.jpg", paid: true, class: "jss2", fullName: "Olatise Excel" },
+    { id: "abiodun_praise", username: "abiodun praise", password: "cmgs207", image: "cmgs207.jpg", paid: true, class: "jss2", fullName: "Abiodun Praise" },
+    // JSS3
+    { id: "abdullah_kehinde", username: "abdullah kehinde", password: "cmgs301", image: "cmgs301.jpg", paid: true, class: "jss3", fullName: "Abdullah Kehinde" },
+    { id: "abiodun_paul", username: "abiodun paul", password: "cmgs302", image: "cmgs302.jpg", paid: true, class: "jss3", fullName: "Abiodun Paul" },
+    // SS1
+    { id: "john_goodness", username: "john goodness", password: "cmgs401", image: "cmgs401.jpg", paid: true, class: "ss1", fullName: "John Goodness" },
+    { id: "ibegbu_cynthia", username: "ibegbu cynthia", password: "cmgs402", image: "cmgs402.jpg", paid: true, class: "ss1", fullName: "Ibegbu Cynthia" },
+    // SS2
+    { id: "aluko_crown", username: "aluko crown", password: "cmgs501", image: "cmgs501.jpg", paid: true, class: "ss2", fullName: "Aluko Crown" },
+    { id: "adejumo_sodiq", username: "adejumo sodiq", password: "cmgs502", image: "cmgs502.jpg", paid: true, class: "ss2", fullName: "Adejumo Sodiq" },
+    // SS3
+    { id: "oltunji_emmanuel", username: "oltunji emmanuel", password: "cmgs601", image: "cmgs601.jpg", paid: true, class: "ss3", fullName: "Oltunji Emmanuel" },
+    { id: "ojo_success", username: "ojo success", password: "cmgs609", image: "cmgs609.jpg", paid: false, class: "ss3", fullName: "Ojo Success" },
+    // Admin
+    { id: "admin", username: "admin", password: "admin", image: "admin.png", paid: true, class: "admin", fullName: "Administrator" }
   ];
 
-  // Randomization settings for subjects
+  // Randomization settings
   const RANDOMIZE_SETTINGS = {};
   SUBJECTS.forEach(subj => {
-    RANDOMIZE_SETTINGS[subj] = Math.random() > 0.7 ? "Yes" : "No";
+    RANDOMIZE_SETTINGS[subj] = ["Yes", "No"][Math.floor(Math.random() * 2)];
   });
-  // Force some subjects to Yes
   ["mathematics", "english_language", "digital_technology"].forEach(s => {
     RANDOMIZE_SETTINGS[s] = "Yes";
   });
@@ -377,14 +378,14 @@
     statsDiv.style.display = "flex";
 
     let totalDocs = 0;
-    let errors = [];
+    let passwordCount = 0;
+    let studentDocs = 0;
+    let attemptCount = 0;
 
     try {
-      // ----------------------------------------------
-      // 1. SEED exam_passwords collection
-      // ----------------------------------------------
+      // ========== 1. SEED exam_passwords ==========
       updateStatus("📖 Seeding exam_passwords...", "loading");
-      let passwordCount = 0;
+      passwordCount = 0;
       
       for (const cls of CLASSES) {
         const subjectsMap = CLASS_SUBJECT_PASSWORDS[cls];
@@ -397,34 +398,16 @@
             password: pwd,
             class: cls,
             subject: subject,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            createdAt: new Date().toISOString()
           });
           passwordCount++;
           totalDocs++;
-          
-          // Update progress every 10 docs
-          if (passwordCount % 10 === 0) {
-            updateStatus(`📖 Seeding exam_passwords: ${passwordCount} uploaded...`, "loading");
-          }
         }
       }
-      
       appendStatus(`✅ exam_passwords: ${passwordCount} documents created`);
 
-      // ----------------------------------------------
-      // 2. SEED exam_randomize settings
-      // ----------------------------------------------
-      updateStatus("🎲 Seeding exam_randomize settings...", "loading");
-      const randomizeRef = doc(db, "exam_randomize", "global_settings");
-      await setDoc(randomizeRef, {
-        ...RANDOMIZE_SETTINGS,
-        lastUpdated: new Date().toISOString()
-      });
-      totalDocs++;
-      appendStatus(`✅ exam_randomize: global settings uploaded (${Object.keys(RANDOMIZE_SETTINGS).length} subjects)`);
-
-      // Also per-class randomization
+      // ========== 2. SEED exam_randomize ==========
+      updateStatus("🎲 Seeding exam_randomize...", "loading");
       for (const cls of CLASSES) {
         const classRandomRef = doc(db, "exam_randomize", cls);
         await setDoc(classRandomRef, {
@@ -434,139 +417,120 @@
         });
         totalDocs++;
       }
-      appendStatus(`✅ exam_randomize: Per-class settings for ${CLASSES.length} classes`);
+      appendStatus(`✅ exam_randomize: Settings for ${CLASSES.length} classes`);
 
-      // ----------------------------------------------
-      // 3. SEED students and their exam_attempts (subcollections)
-      // ----------------------------------------------
+      // ========== 3. SEED students and exam_attempts ==========
       updateStatus("👨‍🎓 Seeding students & exam attempts...", "loading");
-      let attemptCount = 0;
-      let studentDocs = 0;
-
-      for (const student of SAMPLE_STUDENTS) {
+      
+      for (const student of STUDENTS_LIST) {
         // Main student document
         const studentRef = doc(db, "students", student.id);
         await setDoc(studentRef, {
-          name: student.name,
-          class: student.class,
+          username: student.username,
+          fullName: student.fullName,
+          password: student.password,
           image: student.image,
+          class: student.class,
+          paid: student.paid,
           registeredAt: new Date().toISOString(),
           active: true
         });
         studentDocs++;
         totalDocs++;
 
-        // Create some random exam attempts for each student (30-70% of subjects)
-        const subjectsList = Object.keys(CLASS_SUBJECT_PASSWORDS[student.class] || CLASS_SUBJECT_PASSWORDS.jss1);
-        const attemptsToCreate = subjectsList.slice(0, Math.floor(Math.random() * subjectsList.length * 0.4) + 2);
+        // Create exam attempts for each class-appropriate subject
+        const subjectsForClass = Object.keys(CLASS_SUBJECT_PASSWORDS[student.class] || {});
+        const attemptsToCreate = subjectsForClass.slice(0, Math.min(5, subjectsForClass.length));
         
         for (const subj of attemptsToCreate) {
           const attemptDocId = `${student.class}_${subj}`;
           const attemptRef = doc(db, "students", student.id, "exam_attempts", attemptDocId);
           await setDoc(attemptRef, {
-            completed: true,
+            completed: Math.random() > 0.6,
             completedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
             class: student.class,
             subject: subj,
-            score: Math.floor(Math.random() * 41) + 40 // random score 40-80
+            score: Math.floor(Math.random() * 50) + 30
           });
           attemptCount++;
           totalDocs++;
         }
       }
-      appendStatus(`✅ students: ${studentDocs} student records created`);
-      appendStatus(`✅ exam_attempts: ${attemptCount} completed exam records (subcollections)`);
+      appendStatus(`✅ students: ${studentDocs} records | exam_attempts: ${attemptCount}`);
 
-      // ----------------------------------------------
-      // 4. SEED exam_scores collection (aggregate scores)
-      // ----------------------------------------------
-      updateStatus("📊 Seeding exam_scores...", "loading");
-      let scoresCount = 0;
-      
-      for (const cls of CLASSES) {
-        const subjectsForClass = Object.keys(CLASS_SUBJECT_PASSWORDS[cls] || {});
-        for (const subj of subjectsForClass.slice(0, 10)) { // sample scores for first 10 subjects
-          const scoreDocId = `${cls}_${subj}_summary`;
-          const scoreRef = doc(db, "exam_scores", scoreDocId);
-          
-          // Generate aggregate stats
-          const totalStudents = SAMPLE_STUDENTS.filter(s => s.class === cls).length || 5;
-          const avgScore = Math.floor(Math.random() * 35) + 45; // 45-80
-          
-          await setDoc(scoreRef, {
-            class: cls,
-            subject: subj,
-            averageScore: avgScore,
-            highestScore: avgScore + Math.floor(Math.random() * 20),
-            lowestScore: avgScore - Math.floor(Math.random() * 25),
-            totalAttempts: totalStudents,
-            lastUpdated: new Date().toISOString()
-          });
-          scoresCount++;
-          totalDocs++;
-        }
-      }
-      appendStatus(`✅ exam_scores: ${scoresCount} subject score summaries`);
-
-      // ----------------------------------------------
-      // 5. SEED exam_attempt tracking (legacy collection for compatibility)
-      // ----------------------------------------------
-      updateStatus("🔐 Seeding exam_attempt master tracking...", "loading");
-      let masterAttempts = 0;
+      // ========== 4. SEED exam_attempt (legacy) ==========
+      updateStatus("🔐 Seeding exam_attempt tracking...", "loading");
+      let masterCount = 0;
       
       for (const cls of CLASSES) {
         const subjectsMap = CLASS_SUBJECT_PASSWORDS[cls];
         if (!subjectsMap) continue;
         
         for (const subject of Object.keys(subjectsMap)) {
-          const attemptDocId = `${cls}_${subject}`;
-          const attemptRef = doc(db, "exam_attempt_master", attemptDocId);
-          await setDoc(attemptRef, {
-            class: cls,
-            subject: subject,
-            totalAttempts: Math.floor(Math.random() * 50) + 10,
-            lastAttemptAt: new Date().toISOString(),
-            enabled: true
+          const attemptRef = doc(db, "exam_attempt", `${cls}_${subject}`);
+          const attemptData = {};
+          STUDENTS_LIST.forEach(s => {
+            if (s.class === cls && Math.random() > 0.5) {
+              attemptData[s.id] = true;
+            }
           });
-          masterAttempts++;
+          await setDoc(attemptRef, attemptData);
+          masterCount++;
           totalDocs++;
         }
       }
-      appendStatus(`✅ exam_attempt_master: ${masterAttempts} subject tracking records`);
+      appendStatus(`✅ exam_attempt: ${masterCount} tracking documents`);
 
-      // ----------------------------------------------
-      // 6. SEED exam_records (student exam metadata)
-      // ----------------------------------------------
-      updateStatus("📝 Seeding exam_records...", "loading");
-      let examRecordsCount = 0;
+      // ========== 5. SEED exam_scores ==========
+      updateStatus("📊 Seeding exam_scores...", "loading");
+      let scoresCount = 0;
       
-      for (const student of SAMPLE_STUDENTS) {
-        for (const cls of CLASSES) {
-          const recordId = `${student.id}_${cls}`;
-          const recordRef = doc(db, "exam_records", recordId);
-          await setDoc(recordRef, {
-            studentId: student.id,
-            studentName: student.name,
-            class: cls,
-            examsTaken: Math.floor(Math.random() * 8) + 2,
-            totalScore: Math.floor(Math.random() * 300) + 100,
-            lastExamDate: new Date().toISOString()
+      for (const cls of CLASSES) {
+        const subjectsMap = CLASS_SUBJECT_PASSWORDS[cls];
+        if (!subjectsMap) continue;
+        
+        for (const subject of Object.keys(subjectsMap).slice(0, 8)) {
+          const scoreRef = doc(db, "exam_scores", `${cls}_${subject}`);
+          const scoreData = {};
+          STUDENTS_LIST.forEach(s => {
+            if (s.class === cls) {
+              scoreData[s.id] = Math.floor(Math.random() * 50) + 30;
+            }
           });
-          examRecordsCount++;
+          await setDoc(scoreRef, scoreData);
+          scoresCount++;
           totalDocs++;
         }
       }
-      appendStatus(`✅ exam_records: ${examRecordsCount} student exam records`);
+      appendStatus(`✅ exam_scores: ${scoresCount} score documents`);
 
-      // ----------------------------------------------
-      // UPDATE STATS DISPLAY
-      // ----------------------------------------------
+      // ========== 6. SEED exam_records ==========
+      updateStatus("📝 Seeding exam_records...", "loading");
+      let recordsCount = 0;
+      
+      for (const student of STUDENTS_LIST) {
+        const recordRef = doc(db, "exam_records", student.id);
+        await setDoc(recordRef, {
+          studentId: student.id,
+          studentName: student.fullName,
+          username: student.username,
+          class: student.class,
+          email: `${student.username.replace(/\s/g, '.')}@canaanland.edu.ng`,
+          image: student.image,
+          paid: student.paid,
+          createdAt: new Date().toISOString()
+        });
+        recordsCount++;
+        totalDocs++;
+      }
+      appendStatus(`✅ exam_records: ${recordsCount} student records`);
+
+      // ========== UPDATE STATS ==========
       document.getElementById("totalPasswords").innerText = passwordCount;
       document.getElementById("totalSubjects").innerText = SUBJECTS.length;
+      document.getElementById("totalClasses").innerText = CLASSES.length;
 
-      // ----------------------------------------------
-      // SUCCESS!
-      // ----------------------------------------------
+      // ========== SUCCESS ==========
       const successMsg = `
 ╔══════════════════════════════════════════════════════════╗
 ║  ✅ DATABASE SEEDING COMPLETED SUCCESSFULLY!            ║
@@ -576,43 +540,87 @@
 ║  • Student records: ${studentDocs}                                     ║
 ║  • Exam attempts: ${attemptCount}                                       ║
 ║  • Score summaries: ${scoresCount}                                      ║
-║  • Master attempts: ${masterAttempts}                                   ║
-║  • Exam records: ${examRecordsCount}                                    ║
+║  • Exam records: ${recordsCount}                                        ║
 ║  • Total Firestore documents: ${totalDocs}                            ║
 ╠══════════════════════════════════════════════════════════╣
 ║  🎯 Your CBT backend is ready!                          ║
-║  Students can now:                                       ║
-║  - Login with their credentials                          ║
-║  - Select class & subject                                ║
-║  - Enter correct password from Firebase                  ║
-║  - Attempt exams (tracked across sessions)               ║
 ╚══════════════════════════════════════════════════════════╝
       `;
       
       updateStatus(successMsg, "success");
-      seedBtn.disabled = false;
       
-      // Show sample password info
-      appendStatus("\n📌 SAMPLE PASSWORDS (for testing):");
+      appendStatus("\n📌 SAMPLE PASSWORDS:");
       appendStatus("   • JSS1 Mathematics → x8q3r5");
       appendStatus("   • JSS2 English Language → b3w6m9");
-      appendStatus("   • JSS3 Digital Technology → h5x8t1");
-      appendStatus("\n✨ You can now use your CBT exam portal with Firebase backend!");
+      appendStatus("   • SS1 Mathematics → ss1m4th");
+      appendStatus("\n🔐 Admin Login: admin / admin");
 
     } catch (error) {
       console.error("Seeding error:", error);
-      updateStatus(
-        `❌ ERROR DURING SEEDING\n\n${error.message}\n\nCheck console for details.\n\nPossible issues:\n- Firestore not enabled in Firebase Console\n- Security rules blocking writes\n- Network connectivity`,
-        "error"
-      );
+      updateStatus(`❌ ERROR: ${error.message}\n\nCheck: Firestore enabled? Security rules?`, "error");
+    } finally {
       seedBtn.disabled = false;
     }
   };
 
-  // Display ready message on load
   if (db) {
-    updateStatus("✅ Firebase connected. Ready to seed database!\n\n📋 Database will create:\n• exam_passwords (all class+subject combos)\n• students with exam_attempts subcollections\n• exam_scores, exam_records, randomization settings\n\nClick 'Seed Complete Database' to begin.", "success");
+    updateStatus("✅ Firebase connected. Ready to seed database!\n\nClick 'Seed Complete Database' to begin.", "success");
   }
+
+  // ======================= SECURITY RULES (Copy to Firebase Console) =======================
+  console.log(`
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║                    FIREBASE SECURITY RULES                       ║
+  ║         Copy these rules to Firestore → Rules tab                ║
+  ╚══════════════════════════════════════════════════════════════════╝
+
+  rules_version = '2';
+  service cloud.firestore {
+    match /databases/{database}/documents {
+      // Exam passwords - readable by anyone during exam, writable only by admin
+      match /exam_passwords/{docId} {
+        allow read: if true;
+        allow write: if false; // Only via seeder or Firebase Console
+      }
+      
+      // Exam randomization settings
+      match /exam_randomize/{className} {
+        allow read: if true;
+        allow write: if false;
+      }
+      
+      // Students collection - users can only read/write their own data
+      match /students/{studentId} {
+        allow read: if request.auth != null && request.auth.uid == studentId;
+        allow write: if request.auth != null && request.auth.uid == studentId;
+        
+        // Exam attempts subcollection
+        match /exam_attempts/{attemptId} {
+          allow read: if request.auth != null && request.auth.uid == studentId;
+          allow write: if request.auth != null && request.auth.uid == studentId;
+        }
+      }
+      
+      // Exam records - readable by authenticated users
+      match /exam_records/{studentId} {
+        allow read: if request.auth != null;
+        allow write: if false;
+      }
+      
+      // Exam scores - readable for result display
+      match /exam_scores/{examId} {
+        allow read: if true;
+        allow write: if false;
+      }
+      
+      // Legacy exam attempt tracking
+      match /exam_attempt/{examId} {
+        allow read: if true;
+        allow write: if false;
+      }
+    }
+  }
+  `);
 </script>
 
 </body>
