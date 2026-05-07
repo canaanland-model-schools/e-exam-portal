@@ -1,100 +1,502 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="fav_icon2.ico">
+    <title>Exam Result | Canaanland CBT Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-/>
+        body {
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-<title>Result</title>
+        .result-card {
+            max-width: 550px;
+            width: 100%;
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.6s ease-out;
+        }
 
-<style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-body{
-    font-family:Arial;
-    background:#f4f4f4;
-}
+        .result-header {
+            background: linear-gradient(135deg, #008000, #006400);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
 
-.container{
-    max-width:500px;
-    margin:60px auto;
-    background:white;
-    padding:30px;
-    border-radius:10px;
-    text-align:center;
-}
+        .result-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
 
-img{
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    object-fit:cover;
-}
+        .result-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
 
-button{
-    padding:12px 20px;
-    border:none;
-    background:#4a0080;
-    color:white;
-    border-radius:5px;
-    cursor:pointer;
-}
+        .result-body {
+            padding: 40px 30px;
+            text-align: center;
+        }
 
-</style>
+        .student-avatar {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #008000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            background: #f0f0f0;
+        }
+
+        .student-name {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .student-details {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .score-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .score-label {
+            color: rgba(255,255,255,0.9);
+            font-size: 18px;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .score-value {
+            font-size: 64px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .score-total {
+            color: rgba(255,255,255,0.7);
+            font-size: 20px;
+        }
+
+        .score-percentage {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .performance-message {
+            margin: 25px 0;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        .performance-excellent {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .performance-good {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .performance-average {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        .performance-poor {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .info-value {
+            color: #008000;
+            font-weight: bold;
+        }
+
+        .btn-home {
+            background: linear-gradient(135deg, #008000, #006400);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,128,0,0.3);
+        }
+
+        .btn-home:active {
+            transform: translateY(0);
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            position: absolute;
+            animation: fall 3s linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
+<div class="result-card">
+    <div class="result-header">
+        <h1><i class="fa-solid fa-clipboard-list"></i> Exam Result</h1>
+        <p>Third Term Examination 2025/2026</p>
+    </div>
 
-<img id="studentImage">
+    <div class="result-body">
+        <img id="studentImage" class="student-avatar" src="img/default_user.jpg" alt="Student Photo">
+        <h2 class="student-name" id="studentName">Student</h2>
+        <div class="student-details" id="studentDetails">
+            <i class="fa-solid fa-graduation-cap"></i> Loading...
+        </div>
 
-<h1>Exam Result</h1>
+        <div class="score-container">
+            <div class="score-label">YOUR SCORE</div>
+            <div class="score-value" id="scoreValue">0</div>
+            <div class="score-total" id="scoreTotal">out of 50</div>
+            <div class="score-percentage" id="scorePercentage">0%</div>
+        </div>
 
-<h2 id="student"></h2>
+        <div id="performanceMessage" class="performance-message"></div>
 
-<h3 id="score"></h3>
+        <div class="info-row">
+            <span class="info-label"><i class="fa-regular fa-calendar"></i> Examination Date:</span>
+            <span class="info-value" id="examDate">-</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label"><i class="fa-regular fa-clock"></i> Submission Time:</span>
+            <span class="info-value" id="submissionTime">-</span>
+        </div>
 
-<button onclick="goHome()">
-OK
-</button>
+        <button class="btn-home" onclick="goHome()">
+            <i class="fa-solid fa-home"></i> Return to Login
+        </button>
+    </div>
 
+    <div class="footer">
+        <i class="fa-regular fa-copyright"></i> 2026 cbt.canaanlandmodelschools.org
+    </div>
 </div>
 
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAheDyeEzANwioxqAggNU5b9F4mPRTsOKU",
+        authDomain: "exam-records-system.firebaseapp.com",
+        projectId: "exam-records-system",
+        storageBucket: "exam-records-system.firebasestorage.app",
+        messagingSenderId: "754454130857",
+        appId: "1:754454130857:web:fe4923b11d5402389179b8"
+    };
+
+    // Initialize Firebase (optional - for future score storage)
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ==================== GET STUDENT AND RESULT DATA ====================
+    
+    let student = null;
+    let studentName = null;
+    let studentImage = null;
+    let studentClass = null;
+    let result = null;
+    let score = 0;
+    let total = 50;
+
+    // Method 1: Get result from localStorage (set by exam page)
+    const storedResult = localStorage.getItem("cbt_result");
+    if (storedResult) {
+        try {
+            result = JSON.parse(storedResult);
+            score = result.score || 0;
+            total = result.total || 50;
+            studentName = result.studentName;
+            console.log("✅ Result loaded from localStorage:", result);
+        } catch(e) { console.warn(e); }
+    }
+
+    // Method 2: Get student info from sessionStorage (primary)
+    const loggedInUser = sessionStorage.getItem('loggedInUser');
+    if (loggedInUser) {
+        try {
+            student = JSON.parse(loggedInUser);
+            studentName = studentName || student.username || student.fullName;
+            studentImage = student.image ? `img/${student.image}` : null;
+            studentClass = student.class;
+            console.log("✅ Student data from sessionStorage:", studentName);
+        } catch(e) { console.warn(e); }
+    }
+    
+    // Method 3: Fallback to individual sessionStorage items
+    if (!studentName) {
+        studentName = sessionStorage.getItem('username') || sessionStorage.getItem('fullName');
+        studentImage = studentImage || sessionStorage.getItem('image');
+        studentClass = studentClass || sessionStorage.getItem('studentClass');
+        if (studentName) console.log("✅ Student from sessionStorage items:", studentName);
+    }
+    
+    // Method 4: Fallback to localStorage
+    if (!studentName) {
+        const localStudent = localStorage.getItem("loggedInStudent");
+        if (localStudent) {
+            try {
+                student = JSON.parse(localStudent);
+                studentName = student.username;
+                studentImage = student.image;
+                studentClass = student.class;
+                console.log("✅ Student from localStorage:", studentName);
+            } catch(e) { console.warn(e); }
+        }
+    }
+    
+    // Final check - if no student name, redirect to login
+    if (!studentName || studentName === 'null' || studentName === 'undefined') {
+        alert("⚠️ No exam result found. Please take an exam first.");
+        window.location.href = "index.html";
+    }
+    
+    // Set default image path if needed
+    if (!studentImage || studentImage === 'null' || studentImage === 'undefined') {
+        studentImage = "img/default_user.jpg";
+    }
+    
+    // Ensure image path has img/ prefix
+    if (studentImage && !studentImage.startsWith('img/') && !studentImage.startsWith('http')) {
+        studentImage = `img/${studentImage}`;
+    }
+    
+    // Calculate percentage
+    const percentage = Math.round((score / total) * 100);
+    
+    // Determine performance message
+    let performanceClass = "";
+    let performanceText = "";
+    
+    if (percentage >= 70) {
+        performanceClass = "performance-excellent";
+        performanceText = "🎉 EXCELLENT! Outstanding performance! Keep up the great work! 🎉";
+    } else if (percentage >= 50) {
+        performanceClass = "performance-good";
+        performanceText = "👍 GOOD! You passed. Review your weak areas for better results next time!";
+    } else if (percentage >= 40) {
+        performanceClass = "performance-average";
+        performanceText = "📚 AVERAGE. You need to study harder to improve your score.";
+    } else {
+        performanceClass = "performance-poor";
+        performanceText = "⚠️ NEEDS IMPROVEMENT. Please consult your teacher for extra help.";
+    }
+    
+    // Format dates
+    const now = new Date();
+    const examDate = now.toLocaleDateString('en-NG', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+    const submissionTime = now.toLocaleTimeString('en-NG', { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+    });
+    
+    // Display all data on page
+    document.getElementById("studentImage").src = studentImage;
+    document.getElementById("studentImage").alt = studentName;
+    document.getElementById("studentName").innerText = studentName;
+    
+    // Handle potential undefined studentClass
+    const displayClass = studentClass && studentClass !== 'undefined' ? studentClass : 'Not Specified';
+    document.getElementById("studentDetails").innerHTML = `<i class="fa-solid fa-graduation-cap"></i> ${displayClass} Student | <i class="fa-regular fa-id-card"></i> Registration: 2025/2026`;
+    
+    document.getElementById("scoreValue").innerText = score;
+    document.getElementById("scoreTotal").innerHTML = `out of ${total}`;
+    document.getElementById("scorePercentage").innerHTML = `${percentage}%`;
+    
+    const performanceDiv = document.getElementById("performanceMessage");
+    performanceDiv.innerText = performanceText;
+    performanceDiv.className = `performance-message ${performanceClass}`;
+    
+    document.getElementById("examDate").innerHTML = examDate;
+    document.getElementById("submissionTime").innerHTML = submissionTime;
+    
+    // Add confetti effect for excellent/good scores
+    if (percentage >= 50) {
+        createConfetti();
+    }
+    
+    // Confetti animation function
+    function createConfetti() {
+        const colors = ['#ffd700', '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dfe6e9'];
+        for (let i = 0; i < 150; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.width = (Math.random() * 8 + 4) + 'px';
+            confetti.style.height = (Math.random() * 8 + 4) + 'px';
+            confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 2 + 's';
+            confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            document.body.appendChild(confetti);
+            
+            // Remove confetti after animation
+            setTimeout(() => {
+                confetti.remove();
+            }, 4000);
+        }
+    }
+    
+    // Optional: Save result to Firebase for permanent record
+    async function saveResultToFirebase() {
+        try {
+            // This would save the result to the student's record in Firestore
+            // Uncomment if you have the necessary security rules
+            /*
+            const studentId = studentName.toLowerCase().replace(/\s/g, '_');
+            const resultRef = doc(db, "students", studentId, "exam_results", `jss1_mathematics_${Date.now()}`);
+            await setDoc(resultRef, {
+                score: score,
+                total: total,
+                percentage: percentage,
+                subject: "Mathematics",
+                class: "JSS1",
+                completedAt: new Date().toISOString()
+            });
+            console.log("✅ Result saved to Firebase");
+            */
+        } catch (error) {
+            console.warn("Firebase save skipped (optional):", error);
+        }
+    }
+    
+    // Call optional save (non-blocking)
+    saveResultToFirebase();
+    
+    console.log(`📊 Result displayed for ${studentName}: ${score}/${total} (${percentage}%)`);
+    
+    // Clear result from localStorage after displaying to prevent reuse
+    // But keep it until navigation
+    setTimeout(() => {
+        // localStorage.removeItem("cbt_result"); // Uncomment if you want to clear after display
+    }, 1000);
+</script>
+
 <script>
-
-const result =
-JSON.parse(
-localStorage.getItem("cbt_result")
-);
-
-const student =
-JSON.parse(
-localStorage.getItem("loggedInStudent")
-);
-
-document.getElementById("student")
-.innerText =
-result.studentName;
-
-document.getElementById("score")
-.innerText =
-`Score: ${result.score}/${result.total}`;
-
-document.getElementById("studentImage")
-.src =
-student.image;
-
-function goHome(){
-
-localStorage.removeItem("cbt_result");
-
-window.location.href =
-"sign_in.html";
-
-}
-
+    // Global function for navigation (works even if module script fails)
+    window.goHome = function() {
+        // Clear exam-related data
+        localStorage.removeItem("cbt_result");
+        localStorage.removeItem("pendingAttempt");
+        sessionStorage.removeItem("examStarted");
+        sessionStorage.removeItem("examClass");
+        sessionStorage.removeItem("examSubject");
+        
+        // Redirect to login page
+        window.location.href = "index.html";
+    }
+    
+    // Optional: Add event listener for Enter key on button
+    document.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            window.goHome();
+        }
+    });
 </script>
 
 </body>
