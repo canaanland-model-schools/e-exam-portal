@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Sign In | Canaanland CBT Portal</title>
+    <link rel="icon" type="image/x-icon" href="fav_icon2.ico">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+       
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background-image: url("img/lab3.png");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-blend-mode: overlay;
+        }
+
+        .main-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 5px 20px 50px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+            backdrop-filter: blur(2px);
+            transition: transform 0.3s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .logo-area {
+            text-align: center;
+            padding: 30px 30px 15px 30px;
+            background: linear-gradient(135deg, #008000, #006400);
+        }
+
+        .logo-area img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid gold;
+            background: white;
+            padding: 5px;
+        }
+
+        .login-container {
+            padding: 30px;
+        }
+
+        h3 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #008000, #006400);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #4a0080;
+            font-size: 14px;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .input-group label {
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        input:focus {
+            border-color: #4a0080;
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(74, 0, 128, 0.1);
+        }
+
+        .checkbox-group {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input {
+            width: auto;
+            margin: 0;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            color: #4a0080;
+            font-size: 14px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #008000, #006400);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 128, 0, 0.3);
+            background: linear-gradient(135deg, #006400, #008000);
+        }
+
+        .error-message {
+            color: #dc3545;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+            padding: 10px;
+            background: #f8d7da;
+            border-radius: 8px;
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .footer-links a {
+            color: #008000;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .portal-badge {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                margin: 20px;
+            }
+            .login-container {
+                padding: 25px;
+            }
+            h3 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+    <div class="main-wrapper">
+        <div class="login-card">
+            <div class="logo-area">
+                <img src="img/Ctemplogo.png" alt="Canaanland Logo">
+            </div>
+            <div class="login-container">
+                <h3>CANAANLAND CBT PORTAL</h3>
+                <p class="subtitle">Please sign in to your account</p>
+               
+                <form id="loginForm">
+                    <div class="input-group">
+                        <label for="username">📧 Username / Student Name</label>
+                        <input type="text" id="username" placeholder="Enter your username" required autocomplete="off">
+                    </div>
+                   
+                    <div class="input-group">
+                        <label for="password">🔒 Password</label>
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                    </div>
+                   
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="altLoginCheck">
+                        <label for="altLoginCheck">✓ I verify that my details are correct</label>
+                    </div>
+                   
+                    <button type="submit" class="login-btn">
+                        <i>🚀</i> Sign In to Exam Portal
+                    </button>
+                   
+                    <div class="error-message" id="errorMessage">
+                        ❌ Invalid username or password. Please try again.
+                    </div>
+                </form>
+               
+                <div class="footer-links">
+                    <a href="https://canaanland-model-schools.github.io/home/">🏠 School Website</a>
+                    <span style="margin: 0 10px; color:#ccc;">|</span>
+                    <a href="#" onclick="showDemoHint()">ℹ️ Need Help?</a>
+                </div>
+                <div class="portal-badge">
+                    © 2026 CBT Examination System
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ==================== FIREBASE IMPORTS ====================
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc 
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // ==================== FIREBASE CONFIGURATION ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAheDyeEzANwioxqAggNU5b9F4mPRTsOKU",
+            authDomain: "exam-records-system.firebaseapp.com",
+            projectId: "exam-records-system",
+            storageBucket: "exam-records-system.firebasestorage.app",
+            messagingSenderId: "754454130857",
+            appId: "1:754454130857:web:fe4923b11d5402389179b8"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        console.log("✅ Firebase initialized for exam-records-system");
+
+        // ==================== COMPLETE STUDENT DATABASE (WITH PAYMENT STATUS) ====================
+        const users = [
+            // JSS1 BOYS (All Paid)
+            { username: "felix victor", password: "cmgs101", image: "cmgs101.jpg", paid: true, class: "JSS 1", fullName: "Felix Victor" },
+            { username: "alpha trinity", password: "cmgs102", image: "cmgs102.jpg", paid: true, class: "JSS 1", fullName: "Alpha Trinity" },
+            { username: "ogundipe seun", password: "cmgs103", image: "cmgs103.jpg", paid: true, class: "JSS 1", fullName: "Ogundipe Seun" },
+            { username: "abiodun darasimi", password: "cmgs104", image: "cmgs104.jpg", paid: true, class: "JSS 1", fullName: "Abiodun Darasimi" },
+            { username: "ibegbu emmanuel", password: "cmgs105", image: "cmgs105.jpg", paid: true, class: "JSS 1", fullName: "Ibegbu Emmanuel" },
+            { username: "ajayi convenant", password: "cmgs106", image: "cmgs106.jpg", paid: true, class: "JSS 1", fullName: "Ajayi Convenant" },
+            { username: "fadirepo elizabeth", password: "cmgs107", image: "cmgs107.jpg", paid: true, class: "JSS 1", fullName: "Fadirepo Elizabeth" },
+            // JSS1 GIRLS
+            { username: "david grace", password: "cmgs108", image: "cmgs108.jpg", paid: true, class: "JSS 1", fullName: "David Grace" },
+            { username: "adepoju kemisola", password: "cmgs109", image: "cmgs109.jpg", paid: true, class: "JSS 1", fullName: "Adepoju Kemisola" },
+            { username: "ayodele adeife peace", password: "cmgs110", image: "cmgs110.jpg", paid: true, class: "JSS 1", fullName: "Ayodele Adeife Peace" },
+            { username: "fakorede fikayo esther", password: "cmgs111", image: "cmgs111.jpg", paid: true, class: "JSS 1", fullName: "Fakorede Fikayo Esther" },
+            { username: "adewunmi darasimi", password: "cmgs112", image: "cmgs112.jpg", paid: true, class: "JSS 1", fullName: "Adewunmi Darasimi" },
+            // JSS2 BOYS
+            { username: "ojo ayomide", password: "cmgs201", image: "cmgs201.jpg", paid: true, class: "JSS 2", fullName: "Ojo Ayomide" },
+            { username: "olatise excel", password: "cmgs202", image: "cmgs202.jpg", paid: true, class: "JSS 2", fullName: "Olatise Excel" },
+            { username: "adewunmi tunmise", password: "cmgs203", image: "cmgs203.jpg", paid: true, class: "JSS 2", fullName: "Adewunmi Tunmise" },
+            { username: "eyebiokin tobiloba", password: "cmgs204", image: "cmgs204.jpg", paid: true, class: "JSS 2", fullName: "Eyebiokin Tobiloba" },
+            { username: "oluwafemi nifemi", password: "cmgs205", image: "cmgs205.jpg", paid: true, class: "JSS 2", fullName: "Oluwafemi Nifemi" },
+            { username: "oluwatuyi olamide", password: "cmgs206", image: "cmgs206.jpg", paid: true, class: "JSS 2", fullName: "Oluwatuyi Olamide" },
+            { username: "abiodun praise", password: "cmgs207", image: "cmgs207.jpg", paid: true, class: "JSS 2", fullName: "Abiodun Praise" },
+            { username: "adejumo adenike", password: "cmgs208", image: "cmgs208.jpg", paid: true, class: "JSS 2", fullName: "Adejumo Adenike" },
+            { username: "david mercy", password: "cmgs209", image: "cmgs209.jpg", paid: true, class: "JSS 2", fullName: "David Mercy" },
+            { username: "olusanya semilore", password: "cmgs210", image: "cmgs210.jpg", paid: true, class: "JSS 2", fullName: "Olusanya Semilore" },
+            // JSS3
+            { username: "abdullah kehinde", password: "cmgs301", image: "cmgs301.jpg", paid: true, class: "JSS 3", fullName: "Abdullah Kehinde" },
+            { username: "abiodun paul", password: "cmgs302", image: "cmgs302.jpg", paid: true, class: "JSS 3", fullName: "Abiodun Paul" },
+            { username: "aluko taiwo", password: "cmgs303", image: "cmgs303.jpg", paid: true, class: "JSS 3", fullName: "Aluko Taiwo" },
+            { username: "ojo emmanuel", password: "cmgs304", image: "cmgs304.jpg", paid: true, class: "JSS 3", fullName: "Ojo Emmanuel" },
+            { username: "olajide daniel", password: "cmgs305", image: "cmgs305.jpg", paid: true, class: "JSS 3", fullName: "Olajide Daniel" },
+            // SS1
+            { username: "john goodness", password: "cmgs401", image: "cmgs401.jpg", paid: true, class: "SS 1", fullName: "John Goodness" },
+            { username: "ibegbu cynthia", password: "cmgs402", image: "cmgs402.jpg", paid: true, class: "SS 1", fullName: "Ibegbu Cynthia" },
+            { username: "eniafe success", password: "cmgs403", image: "cmgs403.jpg", paid: true, class: "SS 1", fullName: "Eniafe Success" },
+            // SS2
+            { username: "aluko crown", password: "cmgs501", image: "cmgs501.jpg", paid: true, class: "SS 2", fullName: "Aluko Crown" },
+            { username: "adejumo sodiq", password: "cmgs502", image: "cmgs502.jpg", paid: true, class: "SS 2", fullName: "Adejumo Sodiq" },
+            { username: "ambrose godwin", password: "cmgs503", image: "cmgs503.jpg", paid: true, class: "SS 2", fullName: "Ambrose Godwin" },
+            // SS3
+            { username: "oltunji emmanuel", password: "cmgs601", image: "cmgs601.jpg", paid: true, class: "SS 3", fullName: "Oltunji Emmanuel" },
+            { username: "adewunmi nifemi", password: "cmgs602", image: "cmgs602.jpg", paid: true, class: "SS 3", fullName: "Adewunmi Nifemi" },
+            { username: "ojo success", password: "cmgs609", image: "cmgs609.jpg", paid: false, class: "SS 3", fullName: "Ojo Success" },  // Unpaid debtor
+            // ADMIN
+            { username: "admin", password: "admin", image: "admin.png", paid: true, class: "Administrator", fullName: "Administrator" }
+        ];
+
+        // Helper: auto-create Firestore record when student logs in
+        async function createOrUpdateFirestoreRecord(student) {
+            try {
+                const recordRef = doc(db, "exam_records", student.username);
+                const snap = await getDoc(recordRef);
+                
+                if (!snap.exists()) {
+                    await setDoc(recordRef, {
+                        student_name: student.fullName || student.username,
+                        username: student.username,
+                        email: `${student.username}@canaanland.edu.ng`,
+                        class: student.class || "Not Assigned",
+                        image: student.image,
+                        paid_status: student.paid,
+                        created_at: new Date().toISOString(),
+                        last_login: new Date().toISOString(),
+                        login_count: 1
+                    });
+                    console.log("✅ Firestore record created for:", student.username);
+                } else {
+                    // Update last login
+                    await setDoc(recordRef, {
+                        last_login: new Date().toISOString(),
+                        login_count: (snap.data().login_count || 0) + 1
+                    }, { merge: true });
+                    console.log("✅ Firestore record updated for:", student.username);
+                }
+            } catch (error) {
+                console.warn("Firestore write warning (non-critical):", error);
+                // Don't block login if Firestore fails
+            }
+        }
+
+        // ==================== LOGIN HANDLER ====================
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const usernameInput = document.getElementById('username').value.toLowerCase().trim();
+            const passwordInput = document.getElementById('password').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            const altCheck = document.getElementById('altLoginCheck');
+            const loginBtn = document.querySelector('.login-btn');
+            
+            // Disable button during processing
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i>⏳</i> Verifying credentials...';
+            
+            // Find matching user (case-insensitive)
+            const matchedUser = users.find(user => 
+                user.username.toLowerCase() === usernameInput && user.password === passwordInput
+            );
+            
+            if (matchedUser) {
+                // Check payment status
+                if (matchedUser.paid === false) {
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i>🚀</i> Sign In to Exam Portal';
+                    alert("⚠️ You have not paid your school fees. You are not allowed access to the examination portal.\n\nPlease contact the school administration to regularize your payment.");
+                    window.location.href = 'Debtors.html';
+                    return;
+                }
+                
+                // Store complete user data in sessionStorage
+                const userData = {
+                    username: matchedUser.username,
+                    fullName: matchedUser.fullName || matchedUser.username,
+                    password: matchedUser.password,
+                    image: matchedUser.image,
+                    class: matchedUser.class || "Not Specified",
+                    paid: matchedUser.paid,
+                    loginTime: new Date().toISOString()
+                };
+                
+                sessionStorage.setItem('loggedInUser', JSON.stringify(userData));
+                sessionStorage.setItem('username', matchedUser.username);
+                sessionStorage.setItem('fullName', matchedUser.fullName || matchedUser.username);
+                sessionStorage.setItem('image', `img/${matchedUser.image}`);
+                sessionStorage.setItem('studentClass', matchedUser.class || "JSS 1");
+                
+                // Create/update Firestore record (async, don't wait)
+                await createOrUpdateFirestoreRecord(matchedUser);
+                
+                console.log("✅ Login successful for:", matchedUser.username);
+                
+                // Check if alternate validation is required
+                if (altCheck.checked) {
+                    console.log("🔄 Secondary verification passed");
+                    // Show success message before redirect
+                    alert(`Welcome ${matchedUser.fullName || matchedUser.username}! Redirecting to exam portal...`);
+                    window.location.href = 'final_instructions.html';
+                } else {
+                    alert(`✅ Welcome ${matchedUser.fullName || matchedUser.username}! Please check the verification box on next login.`);
+                    window.location.href = 'final_instructions.html';
+                }
+            } else {
+                // Show error
+                errorMessage.style.display = 'block';
+                document.getElementById('password').value = '';
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i>🚀</i> Sign In to Exam Portal';
+                
+                // Auto-hide error after 3 seconds
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 3000);
+            }
+        });
+        
+        // ==================== ALTERNATE VALIDATION FUNCTION ====================
+        window.validateLoginComparison = function(username, password) {
+            const user = users.find(u => 
+                u.username.toLowerCase() === username.toLowerCase() && u.password === password
+            );
+            
+            if (user) {
+                if (user.paid === false) {
+                    alert("⚠️ Payment required: You have outstanding school fees.");
+                    window.location.href = "Debtors.html";
+                    return false;
+                }
+                sessionStorage.setItem('username', user.username);
+                sessionStorage.setItem('image', `img/${user.image}`);
+                sessionStorage.setItem('fullName', user.fullName || user.username);
+                console.log("✅ Alternate validation passed");
+                return true;
+            }
+            return false;
+        };
+        
+        // ==================== HELP FUNCTION ====================
+        window.showDemoHint = function() {
+            alert("📌 Exam Login Help\n\nIf you're having trouble logging in:\n\n1. Use your exact username (case-insensitive)\n2. Use the correct password provided by the school\n3. Ensure your school fees are paid\n4. Contact your class teacher if issues persist\n\nDemo Account:\nUsername: admin\nPassword: admin");
+        };
+        
+        // ==================== KEYBOARD SHORTCUT (Enter submits form) ====================
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+                }
+            });
+        });
+        
+        // Clear error when typing
+        document.getElementById('username').addEventListener('input', () => {
+            document.getElementById('errorMessage').style.display = 'none';
+        });
+        document.getElementById('password').addEventListener('input', () => {
+            document.getElementById('errorMessage').style.display = 'none';
+        });
+        
+        console.log("✅ Login page ready | Students: " + users.filter(u => u.paid).length + " paid, " + users.filter(u => !u.paid).length + " debtors");
+    </script>
+</body>
+</html>
