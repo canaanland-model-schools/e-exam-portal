@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Firebase Exam System Seeder | Canaanland CBT</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #008000, #006400);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .info-box {
+      background: #e8f0fe;
+      border-left: 4px solid #008000;
+      padding: 15px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+    }
+
+    .info-box h3 {
+      color: #008000;
+      margin-bottom: 10px;
+    }
+
+    .info-box ul {
+      margin-left: 20px;
+      color: #555;
+    }
+
+    .info-box li {
+      margin: 8px 0;
+    }
+
+    button {
+      background: linear-gradient(135deg, #008000, #006400);
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0,128,0,0.3);
+    }
+
+    button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #status {
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 500px;
+      overflow-y: auto;
+      background: #1e1e2e;
+      color: #d4d4d4;
+      border: 1px solid #333;
+    }
+
+    .status-success {
+      background: #0a3d2a !important;
+      color: #a5d6a5 !important;
+      border-left: 4px solid #4caf50;
+    }
+
+    .status-error {
+      background: #3d1a1a !important;
+      color: #ffaaaa !important;
+      border-left: 4px solid #f44336;
+    }
+
+    .status-loading {
+      background: #2a2a3d !important;
+      color: #ffd966 !important;
+      border-left: 4px solid #ffc107;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #008000;
+      color: white;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      margin-left: 8px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      flex: 1;
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 28px;
+      font-weight: bold;
+      color: #008000;
+    }
+
+    hr {
+      margin: 20px 0;
+      border: none;
+      border-top: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>📚 Canaanland CBT Database Seeder</h1>
+    <p>Firebase Firestore Seed Generator | Exam System Setup</p>
+    <p style="font-size: 12px; margin-top: 8px;">Project: canaanland-exam-records</p>
+  </div>
+
+  <div class="content">
+    <div class="info-box">
+      <h3>🔧 What this seeder will create:</h3>
+      <ul>
+        <li><strong>📖 exam_passwords</strong> - Passwords for all class+subject combinations (JSS1-3, 20+ subjects)</li>
+        <li><strong>👨‍🎓 students/{studentId}/exam_attempts</strong> - Tracks completed exams per student</li>
+        <li><strong>📊 exam_scores</strong> - Sample scores for analytics (optional)</li>
+        <li><strong>🎲 exam_randomize</strong> - Settings for randomization per subject</li>
+        <li><strong>📝 exam_records</strong> - Student records with personal info</li>
+      </ul>
+    </div>
+
+    <button id="seedBtn" onclick="seedFullDatabase()">
+      🌱 Seed Complete Database to Firebase
+    </button>
+
+    <div id="status">Ready to seed. Click the button above to upload all exam data to Firestore.</div>
+
+    <div class="stats" id="stats" style="display: none;">
+      <div class="stat-card">
+        <div class="stat-number" id="totalPasswords">0</div>
+        <div>Exam Passwords</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalSubjects">0</div>
+        <div>Subjects Configured</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalClasses">3</div>
+        <div>Classes (JSS1-3)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  // Import Firebase v9+ modular SDKs
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, collection, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // ======================= YOUR FIREBASE CONFIG =======================
+  const firebaseConfig = {
+    apiKey: "AIzaSyB4YF_Liw7W7VUMXVdMItsFTXl0199uUdU",
+    authDomain: "canaanland-exam-records.firebaseapp.com",
+    projectId: "canaanland-exam-records",
+    storageBucket: "canaanland-exam-records.firebasestorage.app",
+    messagingSenderId: "877633653593",
+    appId: "1:877633653593:web:f00f3963cbe0b31c69da48",
+    measurementId: "G-7TQK9B76CT"
+  };
+
+  // Initialize Firebase
+  let app;
+  let db;
+
+  try {
+    if (!getApps().length) {
+      app = initializeApp(firebaseConfig);
+    } else {
+      app = getApps()[0];
+    }
+    db = getFirestore(app);
+    console.log("✅ Firebase initialized successfully for project: canaanland-exam-records");
+  } catch (err) {
+    console.error("❌ Firebase init error:", err);
+    document.getElementById("status").innerHTML = `❌ Firebase Initialization Failed: ${err.message}`;
+    document.getElementById("status").className = "status-error";
+  }
+
+  // DOM elements
+  const statusDiv = document.getElementById("status");
+  const seedBtn = document.getElementById("seedBtn");
+  const statsDiv = document.getElementById("stats");
+
+  function updateStatus(message, type = "loading") {
+    statusDiv.innerHTML = message;
+    statusDiv.className = `status-${type}`;
+  }
+
+  function appendStatus(message) {
+    statusDiv.innerHTML += "\n" + message;
+    statusDiv.scrollTop = statusDiv.scrollHeight;
+  }
+
+  // ======================= COMPLETE DATASET =======================
+  
+  // All classes
+  const CLASSES = ["jss1", "jss2", "jss3"];
+  
+  // All subjects (matching the dropdown in exam portal)
+  const SUBJECTS = [
+    "demo", "mathematics", "english_language", "english_literature",
+    "intermediate_science", "digital_technology", "food_and_nutrition",
+    "livestock_farming", "social_studies", "business_studies",
+    "cultural_and_creative_art", "yoruba", "phe", "crs", "french",
+    "music", "phonetics", "nigerian_history", "agricultural_science",
+    "fine_art", "ekiti_values"
+  ];
+
+  // Password mapping (same as original system but stored in Firebase)
+  const CLASS_SUBJECT_PASSWORDS = {
+    jss1: {
+      demo: "9b2f7c",
+      mathematics: "x8q3r5",
+      english_language: "p4t9k1",
+      english_literature: "m6v2w8",
+      intermediate_science: "j5h7s3",
+      digital_technology: "n1d4z9",
+      food_and_nutrition: "n2e5y8",
+      livestock_farming: "a3f5y7",
+      social_studies: "e9g2q4",
+      business_studies: "r7k1b6",
+      cultural_and_creative_art: "t2w8p3",
+      yoruba: "y5n7b9",
+      phe: "v4c2x6",
+      crs: "s8d1f3",
+      french: "z6h9l5",
+      music: "q3m7p2",
+      phonetics: "w1b4t8",
+      nigerian_history: "k9j2r7",
+      agricultural_science: "f3n9n4",
+      fine_art: "t7u8e4",
+      ekiti_values: "f5v3n6"
+    },
+    jss2: {
+      demo: "4r9t2x",
+      mathematics: "s7p1k8",
+      english_language: "b3w6m9",
+      english_literature: "d5v2c7",
+      intermediate_science: "h8t4q1",
+      digital_technology: "j2z6r9",
+      food_and_nutrition: "m4t7s6",
+      livestock_farming: "m9b1w4",
+      social_studies: "q5k8t2",
+      business_studies: "r3n6v9",
+      cultural_and_creative_art: "t8f1c4",
+      yoruba: "w2y7m5",
+      phe: "x6g9s3",
+      crs: "z4b8p1",
+      french: "c1m7t6",
+      music: "v5r3k9",
+      phonetics: "n8d2w7",
+      nigerian_history: "p9h4q6",
+      agricultural_science: "x2v5a2",
+      fine_art: "d4g5m3",
+      ekiti_values: "k3s8b2"
+    },
+    jss3: {
+      demo: "7m3q9p",
+      mathematics: "t2v6k8",
+      english_language: "b8w1c5",
+      english_literature: "d4r9s2",
+      intermediate_science: "f7n3m6",
+      digital_technology: "h5x8t1",
+      food_and_nutrition: "g4vji8",
+      livestock_farming: "l6v4p8",
+      social_studies: "n9m2c3",
+      business_studies: "p5t8r4",
+      cultural_and_creative_art: "r1w6s9",
+      yoruba: "t3k7v2",
+      phe: "v8d4b1",
+      crs: "x6f9m5",
+      french: "z2p7q3",
+      music: "c4h8t9",
+      phonetics: "q9b3n6",
+      nigerian_history: "s5m1r8",
+      agricultural_science: "n6t4w3",
+      fine_art: "b6k8s4",
+      ekiti_values: "w7k4d2"
+    }
+  };
+
+  // Sample student data (for demo)
+  const SAMPLE_STUDENTS = [
+    { id: "STU001", name: "Adekunle Johnson", class: "jss2", image: "img/adekunle.jpg" },
+    { id: "STU002", name: "Fatima Bello", class: "jss1", image: "img/fatima.jpg" },
+    { id: "STU003", name: "Emmanuel Okafor", class: "jss3", image: "img/emmanuel.jpg" },
+    { id: "STU004", name: "Precious David", class: "jss2", image: "img/precious.jpg" },
+    { id: "demo_student", name: "Demo User", class: "jss1", image: "img/default_user.jpg" }
+  ];
+
+  // Randomization settings for subjects
+  const RANDOMIZE_SETTINGS = {};
+  SUBJECTS.forEach(subj => {
+    RANDOMIZE_SETTINGS[subj] = Math.random() > 0.7 ? "Yes" : "No";
+  });
+  // Force some subjects to Yes
+  ["mathematics", "english_language", "digital_technology"].forEach(s => {
+    RANDOMIZE_SETTINGS[s] = "Yes";
+  });
+
+  // ======================= SEEDING FUNCTION =======================
+  window.seedFullDatabase = async function() {
+    if (!db) {
+      updateStatus("❌ Firebase not initialized. Check your configuration.", "error");
+      return;
+    }
+
+    seedBtn.disabled = true;
+    updateStatus("🌱 Starting database seeding process...\n⏳ Connecting to Firestore...", "loading");
+    statsDiv.style.display = "flex";
+
+    let totalDocs = 0;
+    let errors = [];
+
+    try {
+      // ----------------------------------------------
+      // 1. SEED exam_passwords collection
+      // ----------------------------------------------
+      updateStatus("📖 Seeding exam_passwords...", "loading");
+      let passwordCount = 0;
+      
+      for (const cls of CLASSES) {
+        const subjectsMap = CLASS_SUBJECT_PASSWORDS[cls];
+        if (!subjectsMap) continue;
+        
+        for (const [subject, pwd] of Object.entries(subjectsMap)) {
+          const docId = `${cls}_${subject}`;
+          const docRef = doc(db, "exam_passwords", docId);
+          await setDoc(docRef, {
+            password: pwd,
+            class: cls,
+            subject: subject,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+          passwordCount++;
+          totalDocs++;
+          
+          // Update progress every 10 docs
+          if (passwordCount % 10 === 0) {
+            updateStatus(`📖 Seeding exam_passwords: ${passwordCount} uploaded...`, "loading");
+          }
+        }
+      }
+      
+      appendStatus(`✅ exam_passwords: ${passwordCount} documents created`);
+
+      // ----------------------------------------------
+      // 2. SEED exam_randomize settings
+      // ----------------------------------------------
+      updateStatus("🎲 Seeding exam_randomize settings...", "loading");
+      const randomizeRef = doc(db, "exam_randomize", "global_settings");
+      await setDoc(randomizeRef, {
+        ...RANDOMIZE_SETTINGS,
+        lastUpdated: new Date().toISOString()
+      });
+      totalDocs++;
+      appendStatus(`✅ exam_randomize: global settings uploaded (${Object.keys(RANDOMIZE_SETTINGS).length} subjects)`);
+
+      // Also per-class randomization
+      for (const cls of CLASSES) {
+        const classRandomRef = doc(db, "exam_randomize", cls);
+        await setDoc(classRandomRef, {
+          ...RANDOMIZE_SETTINGS,
+          className: cls,
+          lastUpdated: new Date().toISOString()
+        });
+        totalDocs++;
+      }
+      appendStatus(`✅ exam_randomize: Per-class settings for ${CLASSES.length} classes`);
+
+      // ----------------------------------------------
+      // 3. SEED students and their exam_attempts (subcollections)
+      // ----------------------------------------------
+      updateStatus("👨‍🎓 Seeding students & exam attempts...", "loading");
+      let attemptCount = 0;
+      let studentDocs = 0;
+
+      for (const student of SAMPLE_STUDENTS) {
+        // Main student document
+        const studentRef = doc(db, "students", student.id);
+        await setDoc(studentRef, {
+          name: student.name,
+          class: student.class,
+          image: student.image,
+          registeredAt: new Date().toISOString(),
+          active: true
+        });
+        studentDocs++;
+        totalDocs++;
+
+        // Create some random exam attempts for each student (30-70% of subjects)
+        const subjectsList = Object.keys(CLASS_SUBJECT_PASSWORDS[student.class] || CLASS_SUBJECT_PASSWORDS.jss1);
+        const attemptsToCreate = subjectsList.slice(0, Math.floor(Math.random() * subjectsList.length * 0.4) + 2);
+        
+        for (const subj of attemptsToCreate) {
+          const attemptDocId = `${student.class}_${subj}`;
+          const attemptRef = doc(db, "students", student.id, "exam_attempts", attemptDocId);
+          await setDoc(attemptRef, {
+            completed: true,
+            completedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+            class: student.class,
+            subject: subj,
+            score: Math.floor(Math.random() * 41) + 40 // random score 40-80
+          });
+          attemptCount++;
+          totalDocs++;
+        }
+      }
+      appendStatus(`✅ students: ${studentDocs} student records created`);
+      appendStatus(`✅ exam_attempts: ${attemptCount} completed exam records (subcollections)`);
+
+      // ----------------------------------------------
+      // 4. SEED exam_scores collection (aggregate scores)
+      // ----------------------------------------------
+      updateStatus("📊 Seeding exam_scores...", "loading");
+      let scoresCount = 0;
+      
+      for (const cls of CLASSES) {
+        const subjectsForClass = Object.keys(CLASS_SUBJECT_PASSWORDS[cls] || {});
+        for (const subj of subjectsForClass.slice(0, 10)) { // sample scores for first 10 subjects
+          const scoreDocId = `${cls}_${subj}_summary`;
+          const scoreRef = doc(db, "exam_scores", scoreDocId);
+          
+          // Generate aggregate stats
+          const totalStudents = SAMPLE_STUDENTS.filter(s => s.class === cls).length || 5;
+          const avgScore = Math.floor(Math.random() * 35) + 45; // 45-80
+          
+          await setDoc(scoreRef, {
+            class: cls,
+            subject: subj,
+            averageScore: avgScore,
+            highestScore: avgScore + Math.floor(Math.random() * 20),
+            lowestScore: avgScore - Math.floor(Math.random() * 25),
+            totalAttempts: totalStudents,
+            lastUpdated: new Date().toISOString()
+          });
+          scoresCount++;
+          totalDocs++;
+        }
+      }
+      appendStatus(`✅ exam_scores: ${scoresCount} subject score summaries`);
+
+      // ----------------------------------------------
+      // 5. SEED exam_attempt tracking (legacy collection for compatibility)
+      // ----------------------------------------------
+      updateStatus("🔐 Seeding exam_attempt master tracking...", "loading");
+      let masterAttempts = 0;
+      
+      for (const cls of CLASSES) {
+        const subjectsMap = CLASS_SUBJECT_PASSWORDS[cls];
+        if (!subjectsMap) continue;
+        
+        for (const subject of Object.keys(subjectsMap)) {
+          const attemptDocId = `${cls}_${subject}`;
+          const attemptRef = doc(db, "exam_attempt_master", attemptDocId);
+          await setDoc(attemptRef, {
+            class: cls,
+            subject: subject,
+            totalAttempts: Math.floor(Math.random() * 50) + 10,
+            lastAttemptAt: new Date().toISOString(),
+            enabled: true
+          });
+          masterAttempts++;
+          totalDocs++;
+        }
+      }
+      appendStatus(`✅ exam_attempt_master: ${masterAttempts} subject tracking records`);
+
+      // ----------------------------------------------
+      // 6. SEED exam_records (student exam metadata)
+      // ----------------------------------------------
+      updateStatus("📝 Seeding exam_records...", "loading");
+      let examRecordsCount = 0;
+      
+      for (const student of SAMPLE_STUDENTS) {
+        for (const cls of CLASSES) {
+          const recordId = `${student.id}_${cls}`;
+          const recordRef = doc(db, "exam_records", recordId);
+          await setDoc(recordRef, {
+            studentId: student.id,
+            studentName: student.name,
+            class: cls,
+            examsTaken: Math.floor(Math.random() * 8) + 2,
+            totalScore: Math.floor(Math.random() * 300) + 100,
+            lastExamDate: new Date().toISOString()
+          });
+          examRecordsCount++;
+          totalDocs++;
+        }
+      }
+      appendStatus(`✅ exam_records: ${examRecordsCount} student exam records`);
+
+      // ----------------------------------------------
+      // UPDATE STATS DISPLAY
+      // ----------------------------------------------
+      document.getElementById("totalPasswords").innerText = passwordCount;
+      document.getElementById("totalSubjects").innerText = SUBJECTS.length;
+
+      // ----------------------------------------------
+      // SUCCESS!
+      // ----------------------------------------------
+      const successMsg = `
+╔══════════════════════════════════════════════════════════╗
+║  ✅ DATABASE SEEDING COMPLETED SUCCESSFULLY!            ║
+╠══════════════════════════════════════════════════════════╣
+║  📊 Statistics:                                          ║
+║  • Exam passwords: ${passwordCount} documents                         ║
+║  • Student records: ${studentDocs}                                     ║
+║  • Exam attempts: ${attemptCount}                                       ║
+║  • Score summaries: ${scoresCount}                                      ║
+║  • Master attempts: ${masterAttempts}                                   ║
+║  • Exam records: ${examRecordsCount}                                    ║
+║  • Total Firestore documents: ${totalDocs}                            ║
+╠══════════════════════════════════════════════════════════╣
+║  🎯 Your CBT backend is ready!                          ║
+║  Students can now:                                       ║
+║  - Login with their credentials                          ║
+║  - Select class & subject                                ║
+║  - Enter correct password from Firebase                  ║
+║  - Attempt exams (tracked across sessions)               ║
+╚══════════════════════════════════════════════════════════╝
+      `;
+      
+      updateStatus(successMsg, "success");
+      seedBtn.disabled = false;
+      
+      // Show sample password info
+      appendStatus("\n📌 SAMPLE PASSWORDS (for testing):");
+      appendStatus("   • JSS1 Mathematics → x8q3r5");
+      appendStatus("   • JSS2 English Language → b3w6m9");
+      appendStatus("   • JSS3 Digital Technology → h5x8t1");
+      appendStatus("\n✨ You can now use your CBT exam portal with Firebase backend!");
+
+    } catch (error) {
+      console.error("Seeding error:", error);
+      updateStatus(
+        `❌ ERROR DURING SEEDING\n\n${error.message}\n\nCheck console for details.\n\nPossible issues:\n- Firestore not enabled in Firebase Console\n- Security rules blocking writes\n- Network connectivity`,
+        "error"
+      );
+      seedBtn.disabled = false;
+    }
+  };
+
+  // Display ready message on load
+  if (db) {
+    updateStatus("✅ Firebase connected. Ready to seed database!\n\n📋 Database will create:\n• exam_passwords (all class+subject combos)\n• students with exam_attempts subcollections\n• exam_scores, exam_records, randomization settings\n\nClick 'Seed Complete Database' to begin.", "success");
+  }
+</script>
+
+</body>
+</html>
